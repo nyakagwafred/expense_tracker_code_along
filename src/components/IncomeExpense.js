@@ -1,6 +1,21 @@
 import React, { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalState';
 
+function formatKES(num) {
+  let p = num.toFixed(2).split('.');
+  return (
+    'KES ' +
+    p[0]
+      .split('')
+      .reverse()
+      .reduce(function (acc, num, i, orig) {
+        return num === '-' ? acc : num + (i && !(i % 3) ? ',' : '') + acc;
+      }, '') +
+    '.' +
+    p[1]
+  );
+}
+
 export function IncomeExpense() {
   const { transactions } = useContext(GlobalContext);
 
@@ -8,23 +23,21 @@ export function IncomeExpense() {
 
   const income = amounts
     .filter((item) => item > 0)
-    .reduce((acc, item) => (acc += item), 0)
-    .toFixed(2);
+    .reduce((acc, item) => (acc += item), 0);
 
-  const expense = (
+  const expense =
     amounts.filter((item) => item < 0).reduce((acc, item) => (acc += item), 0) *
-    -1
-  ).toFixed(2);
+    -1;
 
   return (
     <div className="inc-exp-container">
       <div>
         <h4>Income</h4>
-        <p className="money plus">+KES {income}</p>
+        <p className="money plus">+ {formatKES(income)}</p>
       </div>
       <div>
         <h4>Expense</h4>
-        <p className="money minus">-KES {expense}</p>
+        <p className="money minus">- {formatKES(expense)}</p>
       </div>
     </div>
   );
